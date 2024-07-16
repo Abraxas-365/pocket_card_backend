@@ -1,0 +1,28 @@
+[package]
+name = "pocket_card_backend"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+actix-cors = "0.7.0"
+actix-web = "4.5.1"
+async-trait = "0.1.80"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0.117"
+sqlx = { version = "0.7.4", features = ["postgres", "runtime-tokio-native-tls","chrono","migrate"] }
+tokio = { version = "1.37.0", features = ["full"] }
+env_logger = "0.8.3"
+log = "0.4.19"
+jsonwebtoken = "7"
+oauth2 = { version = "4", features = ["reqwest"], default-features = false }
+futures = "0.3.30"
+chrono = "0.4.38"
+thiserror = "1.0.60"
+reqwest = { version = "0.11", features = ["json"] }
+uuid = { version = "1.3", features = ["v4", "serde"] }
+bcrypt = "0.15.1"
+actix-session = {version = "0.9.0", features = ["redis-rs-session"]}
+aws-sdk-s3 = "1.40.0"
+aws-config = "1.5.4"
