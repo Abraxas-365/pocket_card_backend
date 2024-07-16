@@ -75,6 +75,7 @@ pub struct UserSetting {
     pub call_me: bool,
     pub email_me: bool,
     pub social_media: bool,
+    pub template: String,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
 }
@@ -89,6 +90,7 @@ impl UserSetting {
             call_me: true,
             email_me: true,
             social_media: false,
+            template: "default".to_string(),
             created_at: Utc::now(),
             updated_at: Utc::now(),
         }

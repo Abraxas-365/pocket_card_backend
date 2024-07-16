@@ -155,8 +155,8 @@ impl Repository for PostgresRepository {
 
     async fn create_settings(&self, setting: &UserSetting) -> Result<UserSetting, ApiError> {
         sqlx::query_as::<_, UserSetting>(
-            "INSERT INTO user_settings (user_id, exchange_contacts, save_contact, call_me, email_me, social_media) 
-             VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+            "INSERT INTO user_settings (user_id, exchange_contacts, save_contact, call_me, email_me, social_media, template) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
         )
         .bind(setting.user_id)
         .bind(setting.exchange_contacts)
@@ -164,6 +164,7 @@ impl Repository for PostgresRepository {
         .bind(setting.call_me)
         .bind(setting.email_me)
         .bind(setting.social_media)
+        .bind(&setting.template)
         .fetch_one(&*self.pool)
         .await
         .map_err(|e| match e {
@@ -177,14 +178,15 @@ impl Repository for PostgresRepository {
     async fn update_settings(&self, setting: &UserSetting) -> Result<UserSetting, ApiError> {
         sqlx::query_as::<_, UserSetting>(
             "UPDATE user_settings SET 
-             exchange_contacts = $1, save_contact = $2, call_me = $3, email_me = $4, social_media = $5
-             WHERE user_id = $6 RETURNING *",
+             exchange_contacts = $1, save_contact = $2, call_me = $3, email_me = $4, social_media = $5, template = $6
+             WHERE user_id = $7 RETURNING *",
         )
         .bind(setting.exchange_contacts)
         .bind(setting.save_contact)
         .bind(setting.call_me)
         .bind(setting.email_me)
         .bind(setting.social_media)
+        .bind(&setting.template)
         .bind(setting.user_id)
         .fetch_one(&*self.pool)
         .await
