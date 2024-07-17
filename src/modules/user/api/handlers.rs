@@ -25,16 +25,13 @@ pub struct UpdateProfileRequest {
     location: Option<String>,
     profile_picture_url: Option<String>,
     theme: Option<String>,
+    template: Option<String>,
     custom_url: Option<String>,
     job_title: Option<String>,
     facebook_url: Option<String>,
     twitter_url: Option<String>,
     instagram_url: Option<String>,
     linkedin_url: Option<String>,
-}
-
-#[derive(Deserialize)]
-pub struct UpdateSettingsRequest {
     exchange_contacts: Option<bool>,
     save_contact: Option<bool>,
     call_me: Option<bool>,
@@ -80,6 +77,9 @@ pub async fn update_profile(
     if let Some(theme) = &profile_data.theme {
         profile.theme = Some(theme.clone());
     }
+    if let Some(template) = &profile_data.template {
+        profile.template = template.clone();
+    }
     if let Some(custom_url) = &profile_data.custom_url {
         profile.custom_url = Some(custom_url.clone());
     }
@@ -98,6 +98,21 @@ pub async fn update_profile(
     if let Some(linkedin_url) = &profile_data.linkedin_url {
         profile.linkedin_url = Some(linkedin_url.clone());
     }
+    if let Some(exchange_contacts) = profile_data.exchange_contacts {
+        profile.exchange_contacts = exchange_contacts;
+    }
+    if let Some(save_contact) = profile_data.save_contact {
+        profile.save_contact = save_contact;
+    }
+    if let Some(call_me) = profile_data.call_me {
+        profile.call_me = call_me;
+    }
+    if let Some(email_me) = profile_data.email_me {
+        profile.email_me = email_me;
+    }
+    if let Some(social_media) = profile_data.social_media {
+        profile.social_media = social_media;
+    }
 
     let updated_profile = service.update_profile(&profile).await?;
     Ok(HttpResponse::Ok().json(updated_profile))
@@ -109,41 +124,4 @@ pub async fn get_profile(
 ) -> Result<HttpResponse, ApiError> {
     let profile = service.find_profile_by_id(&id).await?;
     Ok(HttpResponse::Ok().json(profile))
-}
-
-pub async fn find_settings_by_profile_id(
-    service: web::Data<Arc<Service>>,
-    profile_id: web::Path<String>,
-) -> Result<HttpResponse, ApiError> {
-    let settings = service.find_settings_by_profile_id(&profile_id).await?;
-    Ok(HttpResponse::Ok().json(settings))
-}
-
-pub async fn update_settings(
-    service: web::Data<Arc<Service>>,
-    session: Session,
-    settings_data: web::Json<UpdateSettingsRequest>,
-) -> Result<HttpResponse, ApiError> {
-    let user_id = session.get::<i32>("user_id").unwrap().unwrap(); // TODO: Handle session error properly
-
-    let mut settings = service.find_settings_by_user_id(user_id).await?;
-
-    if let Some(exchange_contacts) = settings_data.exchange_contacts {
-        settings.exchange_contacts = exchange_contacts;
-    }
-    if let Some(save_contact) = settings_data.save_contact {
-        settings.save_contact = save_contact;
-    }
-    if let Some(call_me) = settings_data.call_me {
-        settings.call_me = call_me;
-    }
-    if let Some(email_me) = settings_data.email_me {
-        settings.email_me = email_me;
-    }
-    if let Some(social_media) = settings_data.social_media {
-        settings.social_media = social_media;
-    }
-
-    let updated_settings = service.update_settings(&settings).await?;
-    Ok(HttpResponse::Ok().json(updated_settings))
 }
